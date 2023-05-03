@@ -1,13 +1,15 @@
 # %% Imports
-from utils import DataLoader
+# importing all necessary packages here citing XAI christoph Molnar for credits
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score
 import shap
+from utils import LoadDatafromCSV
 
 # %% Load and preprocess data
-data_loader = DataLoader()
+data_loader = LoadDatafromCSV()
 data_loader.load_dataset()
-data_loader.preprocess_data()
+data_loader.preprocess_data_dummy()
 # Split the data for evaluation
 X_train, X_test, y_train, y_test = data_loader.get_data_split()
 # Oversample the train data
