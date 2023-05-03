@@ -1,9 +1,9 @@
-# %% Imports
+# %% Imports All necessary imports are added here 
 import matplotlib.pyplot as plt
-from utils import DataLoader
+from utils import LoadDatafromCSV
 
 # %% Load data
-data_loader = DataLoader()
+data_loader = LoadDatafromCSV()
 data_loader.load_dataset()
 data = data_loader.data
 
@@ -24,4 +24,5 @@ for col in columns:
 # %% Show preprocessed dataframe
 data_loader.preprocess_data()
 data_loader.data.head()
+
 
