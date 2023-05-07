@@ -5,13 +5,21 @@
 # implemented here. 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score
-
 import lime
 import lime.lime_tabular
+from lime import submodular_pick
 
+import warnings
+warnings.filterwarnings('ignore')
 from interpret.blackbox import LimeTabular
 from interpret import show
+
+import pandas as pd
+import numpy as np
+
+from xgboost import XGBClassifier
 from utils import LoadDatafromCSV
+
 
 # %% Load and preprocess data
 data_loader = LoadDatafromCSV()
@@ -76,7 +84,26 @@ show(lime_local)
 
 
 
+
+
+model = XGBClassifier(n_estimators = 300, random_state = 123)
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
+predict_fn = lambda x: model.predict_proba(x)
+np.random.seed(123)
+# Defining the LIME explainer object
+
+feature_names=X_train.columns.astype(str).values.tolist(),
+explainer = lime.lime_tabular.LimeTabularExplainer(X_train.values,
+                                                   mode='classification',
+                                                   class_names=['No Stroke', 'Stroke'],
+                                                   training_labels='Stroke',
+                                                   feature_names=feature_names)
+# Local Interpretability on particular instance
+# using LIME to get the explanations
+i = 12
+exp = explainer.explain_instance(X_train.loc[i,X_train.columns].astype(str).values, predict_fn, num_features=21)
+exp.show_in_notebook(show_table=True)# %%
+
+
 """
-
-
-# %%
