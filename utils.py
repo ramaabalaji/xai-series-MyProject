@@ -1,14 +1,21 @@
-"""importing all necessary packages here citing XAI christoph Molnar for credits."""
 # importing all necessary packages here citing XAI christoph Molnar for credits
-from imblearn.over_sampling import RandomOverSampler
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split
-import pandas as pd
+# The base code is derived from the above and necesssary changes based on my learning has been 
+# implemented here. 
 
+import pandas as pd 
+from sklearn.preprocessing import OneHotEncoder
 # Makes sure we see all columns
 pd.set_option('display.max_columns', None)
+from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.pipeline import Pipeline
+
+
 class LoadDatafromCSV():
-    # dander method used as a constructor
+
+    #dander method used as a constructor
     def __init__(self):
         self.data = None
 
@@ -19,10 +26,10 @@ class LoadDatafromCSV():
 
     def prep_data(self):
 
-        # Begin the EDa process by learning about your data
-        # The data contains categorical values which should be converted
-        # before we perform any operations on it. We use One hot encoding
-        # to these variables for simplicity
+        # Begin the EDa process by learning about your data 
+        # The data contains categorical values which should be converted 
+        # before we perform any operations on it. We use One hot encoding 
+        # to these variables for simplicity  
         # One-hot encode all categorical columns
         
         # Impute missing values of BMI with 0 if it is not provided already.
@@ -121,4 +128,24 @@ class LoadDatafromCSV():
         x_over = pd.DataFrame(x_np, columns=X_train.columns)
         y_over = pd.Series(y_np, name=y_train.name)
         return x_over, y_over
+    
+
+# The best way is to use SMOTE for sampling the data. 
+# Pipeline has been used to combine, SMOTE - oversampling for minority data and 
+# undersampling for the majority class. 
+
+
+    def smotesample(self, X_train, y_train):
+        over = SMOTE(sampling_strategy=0.1)
+        under = RandomUnderSampler(sampling_strategy=0.5)
+        steps = [('o', over), ('u', under)]
+        pipeline = Pipeline(steps=steps)
+        # transform the dataset
+        x_np = X_train.to_numpy()
+        y_np = y_train.to_numpy()
+        x_np, y_np = pipeline.fit_resample(x_np, y_np)
+        x_over = pd.DataFrame(x_np, columns=X_train.columns)
+        y_over = pd.Series(y_np, name=y_train.name)
+        return x_over, y_over
+
 
