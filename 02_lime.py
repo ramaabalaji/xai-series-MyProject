@@ -17,11 +17,27 @@ data_loader.load_dataset()
 data_loader.preprocess_data_dummy()
 # Split the data for evaluation
 X_train, X_test, y_train, y_test = data_loader.get_data_split()
-# Oversample the train data
-X_train, y_train = data_loader.oversample(X_train, y_train)
+
+# Oversample the minority data is an option - train data
+
+# Just uncomment if you wish to only use 
+# oversampling of the minority data 
+
+
+#X_train, y_train = data_loader.oversample(X_train, y_train)
+#print(X_train.shape)
+#print(X_test.shape)
+#print(f'Printed X_train and X_test')
+
+# The best way is to use SMOTE for sampling the data. 
+# Pipeline has been used to combine, SMOTE - oversampling for minority data and 
+# undersampling for the majority class. 
+
+X_train, y_train = data_loader.smotesample(X_train, y_train)
 print(X_train.shape)
 print(X_test.shape)
-print('Printed X_train and X_test')
+print("After smotesampling: ---------------------")
+
 
 # %% Fit blackbox model
 rf = RandomForestClassifier()
@@ -40,11 +56,12 @@ explainer = lime.lime_tabular.LimeTabularExplainer(
     X_train.values, 
     feature_names=X_train.columns.astype(str).values.tolist(),
     class_names=['MEDV'], verbose=True, mode='regression')
-exp = explainer.explain_instance(X_test.values[10], rf.predict, num_features=10)
+exp = explainer.explain_instance(X_test.values[12], rf.predict, num_features=10)
 exp.show_in_notebook(show_table=True)
 exp.as_list()
 
 """
+
 lime = LimeTabular(model=rf.predict_proba,
                    data=X_train, 
                    random_state=1)
