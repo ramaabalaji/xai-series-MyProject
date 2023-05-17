@@ -3,7 +3,6 @@
 # importing all necessary packages here citing XAI christoph Molnar for credits
 # The base code is derived from the above and necesssary changes based on my learning has been 
 # implemented here. 
-
 from utils import LoadDatafromCSV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score
@@ -64,13 +63,16 @@ d = dice_ml.Data(dataframe=data_loader.data,
 backend = 'sklearn'
 m = dice_ml.Model(model=model, backend=backend)
 exp_random = dice_ml.Dice(d, m, method="random")
-query_instances = X_train[4:6]
+
+#query_instances = X_train[7278:7280]
+query_instances = X_test[354:356]
+
 dice_exp_random = exp_random.generate_counterfactuals(query_instances, total_CFs=2, desired_class="opposite", verbose=False)
 dice_exp_random.visualize_as_dataframe(show_only_changes=True)
 
-print(f" ++++++++++++++++ {X_test[0:1]} ")
+query_instances = X_test[354:356]
 
-query_instances = X_test[0:1]
+# query_instances = X_test[7278:7280]
 dice_exp_random = exp_random.generate_counterfactuals(query_instances, total_CFs=2, desired_class="opposite", verbose=False)
 dice_exp_random.visualize_as_dataframe(show_only_changes=True)
 
@@ -84,6 +86,9 @@ dice_exp_random.visualize_as_dataframe(show_only_changes=True)
 # Here, you can ensure that DiCE varies only 
 # features that it makes sense to vary. 
 # BMI cannot be lower than 15. So a permistted range can be specified
+
+import warnings
+warnings.filterwarnings('ignore')
 
 features_to_vary=['avg_glucose_level',
                   'bmi',
